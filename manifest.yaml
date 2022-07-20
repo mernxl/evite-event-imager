@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: evite-micro-event-imager
+  labels:
+    app: evite-micro-event-imager
+    service: evite-micro-event-imager
+spec:
+  ports:
+    - port: 9091
+      name: grpc
+  selector:
+    app: evite-micro-event-imager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evite-micro-event-imager
+  labels:
+    app: evite-micro-event-imager
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evite-micro-event-imager
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: evite-micro-event-imager
+        version: v1
+    spec:
+      containers:
+        - name: evite-micro-event-imager
+          image: registry.gitlab.com/mernxl-evite/evite-micro-event-imager:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EVENT_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: EVENT_BUCKET_NAME
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: MINIO_ENDPOINT
+            - name: MINIO_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: MINIO_REGION
+            - name: MINIO_USE_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: MINIO_USE_SSL
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: evite-config
+                  key: MINIO_SECRET_KEY
+
+            - name: SERVER_HOST
+              value: 0.0.0.0
+            - name: SERVER_PORT
+              value: "9091"
+          ports:
+            - containerPort: 9091
+---

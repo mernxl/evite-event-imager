@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package event_imager;
+
+message EventEviteTicketInfo {
+  string eviteId = 1;
+  string ticketUrl = 2;
+}
+
+message EventEviteTicketMeta {
+  string qrSize = 1;
+  string qrPositionY = 2;
+  string qrPositionX = 3;
+}
+
+message EventEviteTicketInput {
+  string eventId = 1;
+  string eviteId = 2;
+  EventEviteTicketMeta ticketMeta = 3;
+}
+
+service EventImager {
+  rpc getTicketUrl(EventEviteTicketInput) returns (EventEviteTicketInfo) {};
+}
