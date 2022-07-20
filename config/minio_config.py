@@ -4,7 +4,7 @@ from minio import Minio
 
 minio_client = Minio(
     os.getenv('MINIO_ENDPOINT'),
-    secure=bool(os.getenv('MINIO_USE_SSL', True)),
+    secure=bool(os.environ['MINIO_USE_SSL']),
     region=os.environ['MINIO_REGION'],
     access_key=os.getenv('MINIO_ACCESS_KEY'),
     secret_key=os.getenv('MINIO_SECRET_KEY'),

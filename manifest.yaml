@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: evite-micro-event-imager
+  namespace: evite-micro
   labels:
     app: evite-micro-event-imager
     service: evite-micro-event-imager
@@ -17,6 +18,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: evite-micro-event-imager
+  namespace: evite-micro
   labels:
     app: evite-micro-event-imager
     version: v1
