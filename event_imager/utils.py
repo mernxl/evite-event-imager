@@ -4,7 +4,6 @@ import tempfile
 
 from config.env import config
 from config.minio_config import minio_client
-from event_imager.event_imager_pb2 import EventEviteTicketMeta
 
 
 def get_ticket_object_key(event_id: str):
@@ -23,7 +22,7 @@ def get_value_from_string(size: str, ref_value: float):
         return int(size)
 
 
-def get_ticket_url(event_id: str, evite_id: str, ticket_meta: EventEviteTicketMeta):
+def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
     file_path = f'{tempfile.tempdir}/{get_ticket_object_key(event_id)}'
     minio_client.fget_object(
         bucket_name=config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
@@ -45,7 +44,7 @@ def get_ticket_url(event_id: str, evite_id: str, ticket_meta: EventEviteTicketMe
     )
 
 
-def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, ticket_meta: EventEviteTicketMeta):
+def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, ticket_meta):
     img_bg = Image.open(file_path)
     qr = qrcode.QRCode(box_size=4)
     qr.add_data(data)
