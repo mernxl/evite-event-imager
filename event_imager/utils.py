@@ -8,12 +8,13 @@ from config.minio_config import minio_client
 TEMP_DIR = tempfile.mkdtemp()
 print(TEMP_DIR)
 
-def get_ticket_object_key(event_id: str):
-    return f'tickets/{event_id}'
+
+def get_ticket_object_key(event_id: str, store_file=False):
+    return f'tickets{"-" if store_file else "/"}{event_id}'
 
 
-def get_evite_object_key(evite_id: str):
-    return f'evites/{evite_id}.png'
+def get_evite_object_key(evite_id: str, store_file=False):
+    return f'evites{"-" if store_file else "/"}{evite_id}.png'
 
 
 def get_value_from_string(size: str, ref_value: float):
@@ -26,12 +27,12 @@ def get_value_from_string(size: str, ref_value: float):
 
 def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
     """ Make sure to delete the files in temp dir later, don't saturate container """
-    file_path = f'{TEMP_DIR}/{get_ticket_object_key(event_id)}'
+    file_path = f'{TEMP_DIR}/{get_ticket_object_key(event_id, True)}'
     minio_client.fget_object(
         bucket_name=config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
     )
 
-    file_dest_path = f'{TEMP_DIR}/{get_evite_object_key(event_id)}'
+    file_dest_path = f'{TEMP_DIR}/{get_evite_object_key(event_id, True)}'
     compose_data_as_qr_on_image(evite_id, file_path, file_dest_path, ticket_meta)
 
     minio_client.fput_object(
@@ -64,6 +65,6 @@ def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, 
     img_bg.paste(img_qr, (
         (get_value_from_string(ticket_meta.qrPositionX, img_bg.size[0])),
         get_value_from_string(ticket_meta.qrPositionY, img_bg.size[1]))
-    )
+                 )
 
     img_bg.save(file_dest_path)
