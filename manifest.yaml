@@ -48,17 +48,17 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: evite-config
-                  key: MINIO_ENDPOINT
+                  key: MINIO_ENDPOIONT_PY
             - name: MINIO_REGION
               valueFrom:
                 configMapKeyRef:
                   name: evite-config
                   key: MINIO_REGION
-            - name: MINIO_USE_SSL
+            - name: MINIO_PORT
               valueFrom:
                 configMapKeyRef:
                   name: evite-config
-                  key: MINIO_USE_SSL
+                  key: MINIO_PORT
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 configMapKeyRef:

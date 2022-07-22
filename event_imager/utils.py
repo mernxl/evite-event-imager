@@ -4,6 +4,7 @@ import tempfile
 
 from config.env import config
 from config.minio_config import minio_client
+from event_imager.event_imager_pb2 import EventEviteTicketMeta
 
 
 def get_ticket_object_key(event_id: str):
@@ -22,7 +23,7 @@ def get_value_from_string(size: str, ref_value: float):
         return int(size)
 
 
-def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
+def get_ticket_url(event_id: str, evite_id: str, ticket_meta: EventEviteTicketMeta):
     file_path = f'{tempfile.tempdir}/{get_ticket_object_key(event_id)}'
     minio_client.fget_object(
         bucket_name=config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
@@ -44,7 +45,7 @@ def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
     )
 
 
-def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, ticket_meta):
+def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, ticket_meta: EventEviteTicketMeta):
     img_bg = Image.open(file_path)
     qr = qrcode.QRCode(box_size=4)
     qr.add_data(data)
@@ -53,14 +54,14 @@ def compose_data_as_qr_on_image(data: str, file_path: str, file_dest_path: str, 
     img_qr = qr.make_image()
 
     # resize the image to new size
-    new_size = get_value_from_string(ticket_meta['qrSize'], img_bg.size[1])
+    new_size = get_value_from_string(ticket_meta.qrSize, img_bg.size[1])
 
     img_qr = img_qr.resize((new_size, new_size), Image.Resampling.LANCZOS)
 
     # determine pasting position from height of flyer and qr code
     img_bg.paste(img_qr, (
-        (get_value_from_string(ticket_meta['qrPositionX'], img_bg.size[0])),
-        get_value_from_string(ticket_meta['qrPositionY'], img_bg.size[1]))
+        (get_value_from_string(ticket_meta.qrPositionX, img_bg.size[0])),
+        get_value_from_string(ticket_meta.qrPositionY, img_bg.size[1]))
                  )
 
     img_bg.save(file_dest_path)
