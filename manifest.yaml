@@ -37,7 +37,7 @@ spec:
       containers:
         - name: evite-micro-event-imager
           image: registry.gitlab.com/mernxl-evite/evite-micro-event-imager:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: EVENT_BUCKET_NAME
               valueFrom:

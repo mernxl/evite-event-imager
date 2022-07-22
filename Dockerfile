@@ -2,14 +2,17 @@
 
 FROM python:3.9-slim-buster
 
-WORKDIR /app
+RUN mkdir /service
 
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY utils.py ./
-COPY config ./config
-COPY protobufs ./protobufs
-COPY event_imager ./event_imager
+COPY event_imager /service/event_imager
+COPY protobufs /service/protobufs
 
-CMD [ "python", "event_imager/event_imager_service.py"]
+WORKDIR /service/event_imager
+
+RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. \
+               --grpc_python_out=. ../protobufs/event_imager.proto
+
+CMD [ "python", "main.py"]
