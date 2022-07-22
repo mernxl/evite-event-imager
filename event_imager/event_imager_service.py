@@ -9,7 +9,7 @@ from config.minio_config import setup_bucket
 from utils import get_ticket_url
 
 
-pipclass EventImagerService(event_imager_pb2_grpc.EventImagerServicer):
+class EventImagerService(event_imager_pb2_grpc.EventImagerServicer):
     def getTicketUrl(self, request, context):
         ticket_info = event_imager_pb2.EventEviteTicketInfo(eviteId=request.eviteId)
 
