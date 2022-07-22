@@ -25,21 +25,21 @@ def get_value_from_string(size: str, ref_value: float):
 def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
     file_path = f'{tempfile.tempdir}/{get_ticket_object_key(event_id)}'
     minio_client.fget_object(
-        bucket_name=config.env.config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
+        bucket_name=config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
     )
 
     file_dest_path = f'{tempfile.tempdir}/{get_evite_object_key(event_id)}'
     compose_data_as_qr_on_image(evite_id, file_path, file_dest_path, ticket_meta)
 
     minio_client.fput_object(
-        bucket_name=config.env.config['bucket_name'],
+        bucket_name=config['bucket_name'],
         object_name=get_evite_object_key(evite_id),
         file_path=file_dest_path,
         content_type='image/png'
     )
 
     return minio_client.presigned_get_object(
-        bucket_name=config.env.config['bucket_name'],
+        bucket_name=config['bucket_name'],
         object_name=get_evite_object_key(evite_id),
     )
 

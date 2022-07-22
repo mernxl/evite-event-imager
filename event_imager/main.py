@@ -1,4 +1,5 @@
 from concurrent import futures
+import logging
 
 import grpc
 
@@ -8,6 +9,9 @@ from event_imager_service import EventImagerService
 
 
 def serve():
+    # enable logging with INFO level
+    logging.basicConfig(level=logging.INFO)
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     event_imager_pb2_grpc.add_EventImagerServicer_to_server(EventImagerService(), server)
 
