@@ -18,7 +18,7 @@ def get_evite_object_key(evite_id: str, store_file=False):
 
 
 def get_value_from_string(size: str, ref_value: float):
-    if size.find('%'):
+    if size.rfind('%') != -1:
         arr = size.split('%')
         return round((float(arr[0]) / 100) * ref_value)
     else:
