@@ -1,6 +1,6 @@
 import event_imager_pb2
 import event_imager_pb2_grpc
-from event_imager.utils import get_ticket_url
+from utils import get_ticket_url
 
 
 class EventImagerService(event_imager_pb2_grpc.EventImagerServicer):
