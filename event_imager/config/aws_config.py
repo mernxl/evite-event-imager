@@ -1,5 +1,6 @@
 import boto3
-from env import config
+
+from .env import config
 
 s3_client = boto3.client('s3',
                          region_name=config['aws_region'],
