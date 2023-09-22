@@ -3,10 +3,9 @@ from PIL import Image
 import tempfile
 
 from config.env import config
-from config.minio_config import minio_client
+from config.aws_config import s3_client
 
 TEMP_DIR = tempfile.mkdtemp()
-print(TEMP_DIR)
 
 
 def get_ticket_object_key(event_id: str, store_file=False):
@@ -28,23 +27,24 @@ def get_value_from_string(size: str, ref_value: float):
 def get_ticket_url(event_id: str, evite_id: str, ticket_meta):
     """ Make sure to delete the files in temp dir later, don't saturate container """
     file_path = f'{TEMP_DIR}/{get_ticket_object_key(event_id, True)}'
-    minio_client.fget_object(
-        bucket_name=config['bucket_name'], object_name=get_ticket_object_key(event_id), file_path=file_path
+    s3_client.download_file(
+        Bucket=config['bucket_name'], Key=get_ticket_object_key(event_id), Filename=file_path
     )
 
     file_dest_path = f'{TEMP_DIR}/{get_evite_object_key(event_id, True)}'
     compose_data_as_qr_on_image(evite_id, file_path, file_dest_path, ticket_meta)
 
-    minio_client.fput_object(
-        bucket_name=config['bucket_name'],
-        object_name=get_evite_object_key(evite_id),
-        file_path=file_dest_path,
-        content_type='image/png'
+    s3_client.upload_file(
+        Filename=file_dest_path,
+        Bucket=config['bucket_name'],
+        Key=get_evite_object_key(evite_id),
+        ExtraArgs={'ContentType': 'image/png'}
     )
 
-    return minio_client.presigned_get_object(
-        bucket_name=config['bucket_name'],
-        object_name=get_evite_object_key(evite_id),
+    return s3_client.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': config['bucket_name'], 'Key': get_evite_object_key(evite_id)},
+        ExpiresIn=60 * 60  # 60 minutes (secs)
     )
 
 
