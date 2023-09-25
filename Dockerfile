@@ -15,10 +15,8 @@ WORKDIR /service/event_imager
 RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. \
                --grpc_python_out=. ../protobufs/event_imager.proto
 
-ENV OTEL_SERVICE_NAME=evite-event-imager
-ENV OTEL_TRACES_EXPORTER=otlp
-ENV OTEL_METRICS_EXPORTER=otlp
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=$NEW_RELIC_OTEL_ENDPOINT
-ENV OTEL_EXPORTER_OTLP_HEADERS="api-key=$NEW_RELIC_API_KEY"
+COPY startup-script.sh startup-script.sh
 
-CMD [ "opentelemetry-instrument", "python", "main.py"]
+RUN chmod +x startup-script.sh
+
+CMD ["./startup-script.sh"]
