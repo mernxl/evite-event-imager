@@ -36,6 +36,7 @@ build/Release
 logs
 *.log
 *.zip
+.env
 
 # local .ini files
 *.local.*

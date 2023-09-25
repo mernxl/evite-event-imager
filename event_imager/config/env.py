@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 config = {
     "bucket_name": os.getenv('EVENT_BUCKET_NAME'),
     "server_port": os.getenv('PORT', 9091),
